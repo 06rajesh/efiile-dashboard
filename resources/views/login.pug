@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    title= ' E-file Admin Dashboard'
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Roboto:300,400,500')
+    link(rel='stylesheet', href='/css/login.css')
+  body
+    h1 Admin Login
+    div.w3ls-login.box.box--big
+      form(method='POST' action='/login')
+        div.agile-field-txt
+            label(for='name') Username:
+            input#name(type='text', placeholder='Enter Your Name' name='name')
+        div.agile-field-txt
+            label(for='password') Password:
+            input#password(type='password', placeholder='Enter Password' name='password')
+        div.w3ls-bot
+            div.form-end
+                input(type='submit', value='LOGIN')
+            div.clearfix

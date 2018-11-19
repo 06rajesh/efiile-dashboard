@@ -10,7 +10,6 @@ import { Provider } from 'react-redux';
 
 import '../sass/app.scss';
 import store from './store';
-import Login from './pages/login';
 import Layout from './pages/layout';
 import NotFound from './pages/notfound';
 

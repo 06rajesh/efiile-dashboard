@@ -3,6 +3,8 @@
  */
 
 import React, {Component} from 'react';
+import Layout from '../layout';
+import Typography from '@material-ui/core/Typography';
 
 class NotFound extends Component {
 
@@ -12,7 +14,9 @@ class NotFound extends Component {
 
     render(){
         return(
-            <h2>Page Not Found</h2>
+            <Layout>
+                <Typography variant="h5" align="center">Page Not Found</Typography>
+            </Layout>
         )
     }
 

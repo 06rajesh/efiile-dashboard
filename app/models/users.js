@@ -29,7 +29,7 @@ var userObject = {
     },
     addedBy: {
         type: ObjectId,
-        ref: 'users'
+        ref: 'Users'
     },
     level: {type: Number, required: [true, 'User Level Must be assigned']}
 };

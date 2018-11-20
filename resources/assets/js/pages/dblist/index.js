@@ -13,7 +13,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
+import TextField from '@material-ui/core/TextField';
 import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import Icon from '@material-ui/core/Icon';
 
 const styles = theme => ({
     paper: {
@@ -40,11 +45,14 @@ class DBList extends Component {
         this.state = {
             dblist: [],
             selected: null,
-            open: false
+            open: false,
+            newModal: false,
+            newDb: {}
         };
 
         this.handleClose = this.handleClose.bind(this);
         this.renderConfirmModal = this.renderConfirmModal.bind(this);
+        this.renderAddNewListItem = this.renderAddNewListItem.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
     }
 
@@ -53,11 +61,11 @@ class DBList extends Component {
             this.setState({
                 dblist: response.data
             });
-        })
+        });
     }
 
     handleClose(){
-        this.setState({ open: false });
+        this.setState({ open: false, newModal: false });
     }
 
     onItemClick(itemIndex){
@@ -65,7 +73,6 @@ class DBList extends Component {
             selected: this.state.dblist[itemIndex],
         }, () => {
             this.setState({open: true});
-            console.log(this.state.selected.dbHost);
         });
     }
 
@@ -74,8 +81,8 @@ class DBList extends Component {
 
         return(
             <Modal
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
+                aria-labelledby="confirm-delete-title"
+                aria-describedby="confirm-delete-description"
                 open={this.state.open}
                 onClose={this.handleClose}
             >
@@ -96,6 +103,37 @@ class DBList extends Component {
         );
     }
 
+    renderAddModal(){
+        let {classes} = this.props;
+
+        return(
+            <Modal
+                aria-labelledby="confirm-delete-title"
+                aria-describedby="confirm-delete-description"
+                open={this.state.newModal}
+                onClose={this.handleClose}
+            >
+                <div className={classes.paper}>
+                    <form>
+                        <TextField id="title" label="Database Title" type="text" name="title" margin="normal" variant="outlined" fullWidth/>
+                        <TextField id="email" label="Email" type="email" name="email" autoComplete="email" margin="normal" variant="outlined" fullWidth/>
+                    </form>
+                </div>
+            </Modal>
+        );
+    }
+
+    renderAddNewListItem(){
+        return(
+            <ListItem button onClick={() => this.setState({newModal: true})}>
+                <Avatar>
+                    <Icon>add</Icon>
+                </Avatar>
+                <ListItemText primary="Add New" />
+            </ListItem>
+        );
+    }
+
     render(){
 
         let {classes} = this.props;
@@ -108,15 +146,17 @@ class DBList extends Component {
 
         return(
             <Layout title="Database Listing" pageIcon="dns">
+                {this.renderAddModal()}
                 {this.renderConfirmModal()}
                 <List>
+                    {this.renderAddNewListItem()}
                     {listItems}
                 </List>
             </Layout>
         )
     }
 
-};
+}
 
 DBList.propTypes = {
     classes : PropTypes.object.isRequired

@@ -35,7 +35,7 @@ class DbItem extends Component {
 
         this.state = {
             open: false
-        }
+        };
     }
 
     render(){

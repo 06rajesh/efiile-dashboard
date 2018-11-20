@@ -12,6 +12,7 @@ var dbNodeObject = {
     dbUser : { type: String, required: [true, 'Please Enter DB Username.'] },
     dbPassword : { type: String, required: [true, 'Please Enter DB Password.']},
     dbHost : { type: String, required: [true, 'Please Enter DB Hostname.'] },
+    dbPort : { type: String, required: [true, 'Please Enter DB Port.'] },
     enable : { type: Boolean },
     title  : { type: String, required: [true, 'Please Enter DB Title.'] },
 };

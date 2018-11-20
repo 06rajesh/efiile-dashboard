@@ -14,9 +14,7 @@ class NotFound extends Component {
 
     render(){
         return(
-            <Layout>
-                <Typography variant="h5" align="center">Page Not Found</Typography>
-            </Layout>
+            <Layout title="Page Not Found"/>
         )
     }
 

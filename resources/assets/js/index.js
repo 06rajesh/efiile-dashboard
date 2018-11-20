@@ -10,14 +10,15 @@ import { Provider } from 'react-redux';
 
 import '../sass/app.scss';
 import store from './store';
-import Layout from './pages/layout';
+import DBList from './pages/dblist';
 import NotFound from './pages/notfound';
 
 let Root = ({store}) => (
     <Provider store={store}>
         <Router>
             <Switch>
-                <Route exact path="/" component={Layout} />
+                <Route exact path="/" component={DBList} />
+                <Route path="/dblist" component={DBList} />
                 <Route component={NotFound} />
             </Switch>
         </Router>

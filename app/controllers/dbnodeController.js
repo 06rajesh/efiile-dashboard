@@ -15,6 +15,7 @@ module.exports = {
             dbUser : params.user,
             dbPassword : params.password ? params.password : '',
             dbHost : params.host,
+            dbPort : params.port ? params.port : '3306',
             enable : params.enabled ? params.enabled : false,
             title  : params.title,
         });
@@ -45,6 +46,49 @@ module.exports = {
                 });
             });
         }
+    },
+
+    getAll: function (req, res, next) {
+        DBNode
+            .find({})
+            .limit(10)
+            .sort({ createdAt: -1 })
+            .select({ _id: 1, dbName: 1, dbUser: 1, dbPassword: 1, dbHost:1, dbPort: 1, enable: 1, title: 1, createdAt: 1})
+            .exec(function(err, users){
+                if(err){
+                    return errResponse(res, next, err, "Error Occured, DBNode Could Not Be Fetched");
+                }else{
+                    res.json({
+                        data: users,
+                        success: true,
+                        status: 200
+                    });
+                }
+            });
+    },
+
+    deleteById: function (req, res, next) {
+        var params = req.body;
+
+        DBNode.findByIdAndRemove({ _id: params.id}, function (err, response) {
+            if(err){
+                return errResponse(res, next, err);
+            }else{
+                if(response){
+                    res.json({
+                        message: `DBNode with name ${response.dbName} has been deleted`,
+                        success: true,
+                        status: 200
+                    });
+                }else{
+                    res.json({
+                        message: 'No DBNode Found with that Id',
+                        success: false,
+                        status: 204
+                    });
+                }
+            }
+        });
     }
 };
 

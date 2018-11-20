@@ -11,6 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
 
 const styles = {
@@ -38,6 +39,25 @@ const styles = {
         position: 'absolute',
         top: '10%',
         right: '25px'
+    },
+    pageTitleContainer: {
+        padding: '65px 0px',
+        background: '#f9f9f9',
+        borderBottom: '1px solid #f1f1f1',
+        textAlign: 'center'
+    },
+    pageTitle: {
+        fontSize: '45px',
+        color: 'rgba(0,0,0,0.6)'
+    },
+    avatarStyle: {
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: '70px',
+        height: '70px'
+    },
+    pageIconStyle: {
+        fontSize: '55px'
     }
 };
 
@@ -53,7 +73,7 @@ class Layout extends Component {
 
     render(){
 
-        const {classes, children} = this.props;
+        const {classes, children, title} = this.props;
 
         return(
             <div>
@@ -67,6 +87,14 @@ class Layout extends Component {
                         <Icon>exit_to_app</Icon>
                     </IconButton>
                 </Paper>
+                <div className={classes.pageTitleContainer}>
+                    {this.props.pageIcon  &&
+                        <Avatar className={classes.avatarStyle}>
+                            <Icon className={classes.pageIconStyle}>{this.props.pageIcon}</Icon>
+                        </Avatar>
+                    }
+                    <Typography variant='h2' align='center' className={classes.pageTitle}>{title}</Typography>
+                </div>
                 <div className={classes.body}>
                     {children}
                 </div>
@@ -77,7 +105,9 @@ class Layout extends Component {
 }
 
 Layout.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    title: PropTypes.string.isRequired,
+    pageIcon: PropTypes.string
 };
 
 export default withStyles(styles)(Layout);

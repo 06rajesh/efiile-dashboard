@@ -15,6 +15,8 @@ routes.get('/users/all', userCtrl.getAll);
 routes.post('/users/new', userCtrl.create);
 routes.post('/users/delete', userCtrl.deleteById);
 
+routes.get('/dbnode/all', dbNodeCtrl.getAll);
 routes.post('/dbnode/new', dbNodeCtrl.create);
+routes.post('/dbnode/delete', dbNodeCtrl.deleteById);
 
 module.exports = routes;

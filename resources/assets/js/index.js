@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import '../sass/app.scss';
 import store from './store';
 import DBList from './pages/dblist';
+import Users from './pages/users';
 import NotFound from './pages/notfound';
 
 let Root = ({store}) => (
@@ -19,6 +20,7 @@ let Root = ({store}) => (
             <Switch>
                 <Route exact path="/" component={DBList} />
                 <Route path="/dblist" component={DBList} />
+                <Route path="/users" component={Users} />
                 <Route component={NotFound} />
             </Switch>
         </Router>

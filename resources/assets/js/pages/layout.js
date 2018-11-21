@@ -5,10 +5,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
@@ -29,6 +31,10 @@ const styles = {
         maxWidth: '750px',
         margin: '0 auto'
     },
+    tabContainer: {
+        backgroundColor: '#efefef',
+        marginBottom: '3px'
+    },
     titleStyle: {
         color: '#ffffff',
         fontWeight: '200',
@@ -41,7 +47,7 @@ const styles = {
         right: '25px'
     },
     pageTitleContainer: {
-        padding: '65px 0px',
+        padding: '50px 0px',
         background: '#f9f9f9',
         borderBottom: '1px solid #f1f1f1',
         textAlign: 'center'
@@ -61,14 +67,42 @@ const styles = {
     }
 };
 
+const pages = [
+    {
+        label: 'Database',
+        url: 'dblist'
+    },
+    {
+        label: 'Users',
+        url: 'users'
+    }
+];
+
 class Layout extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            currentPage: 0
+        };
+
+        this.onTabClick = this.onTabClick.bind(this);
     }
 
     logOutClick(){
         window.location.href = '/logout';
+    }
+
+    componentWillReceiveProps(nextProps){
+       // console.log(nextProps);
+    }
+
+    onTabClick(index){
+        this.setState({
+            currentPage: index
+        }, () => {
+            this.props.history.push(pages[index].url)
+        });
     }
 
     render(){
@@ -77,7 +111,7 @@ class Layout extends Component {
 
         return(
             <div>
-                <Paper square component="header" elevation={1} className={classes.root}>
+                <Paper square component="header" elevation={2} className={classes.root}>
                     <Link to='/' className={classes.titleStyle}>
                         <Typography variant="h4" className={classes.titleStyle} align="center">
                             Efile Admin Dashboard
@@ -86,6 +120,17 @@ class Layout extends Component {
                     <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.logOutClick}>
                         <Icon>exit_to_app</Icon>
                     </IconButton>
+                </Paper>
+                <Paper square elevation={1} className={classes.tabContainer}>
+                    <Tabs value={this.state.currentPage} style={{maxWidth: '750px', margin: '0 auto'}}>
+                        {
+                            pages.map((page, index) => {
+                                return(
+                                    <Tab key={index} onClick={(event) => this.onTabClick(index)} label={page.label}/>
+                                );
+                            })
+                        }
+                    </Tabs>
                 </Paper>
                 <div className={classes.pageTitleContainer}>
                     {this.props.pageIcon  &&
@@ -110,4 +155,6 @@ Layout.propTypes = {
     pageIcon: PropTypes.string
 };
 
-export default withStyles(styles)(Layout);
+let routerLayout = withRouter(Layout);
+
+export default withStyles(styles)(routerLayout);

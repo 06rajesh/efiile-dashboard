@@ -6,14 +6,14 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Layout from '../layout';
 
-import {getDbNodeList} from '../../actions/dbNodeActions';
+import {getDbNodeList, createNewDB} from '../../actions/dbNodeActions';
 import DBItem from './dbitem';
+import NewDbForm from './newDbForm';
 
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
-import TextField from '@material-ui/core/TextField';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -50,18 +50,33 @@ class DBList extends Component {
             newDb: {}
         };
 
+        this.fetchAllDb = this.fetchAllDb.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.renderConfirmModal = this.renderConfirmModal.bind(this);
         this.renderAddNewListItem = this.renderAddNewListItem.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
+        this.createNewDatabase = this.createNewDatabase.bind(this);
     }
 
     componentDidMount(){
+        this.fetchAllDb();
+    }
+
+    fetchAllDb(){
         getDbNodeList().then((response) => {
             this.setState({
                 dblist: response.data
             });
         });
+    }
+
+    createNewDatabase(params){
+        this.handleClose();
+        createNewDB(params).then((response) => {
+            if(response.success){
+                this.fetchAllDb();
+            }
+        })
     }
 
     handleClose(){
@@ -108,16 +123,13 @@ class DBList extends Component {
 
         return(
             <Modal
-                aria-labelledby="confirm-delete-title"
-                aria-describedby="confirm-delete-description"
+                aria-labelledby="new-dbform-title"
+                aria-describedby="new-dbform-description"
                 open={this.state.newModal}
                 onClose={this.handleClose}
             >
                 <div className={classes.paper}>
-                    <form>
-                        <TextField id="title" label="Database Title" type="text" name="title" margin="normal" variant="outlined" fullWidth/>
-                        <TextField id="email" label="Email" type="email" name="email" autoComplete="email" margin="normal" variant="outlined" fullWidth/>
-                    </form>
+                    <NewDbForm onSubmit={this.createNewDatabase}/>
                 </div>
             </Modal>
         );

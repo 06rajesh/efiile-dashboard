@@ -83,7 +83,7 @@ class Layout extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPage: 0
+            currentPage: 'dblist'
         };
 
         this.onTabClick = this.onTabClick.bind(this);
@@ -93,13 +93,16 @@ class Layout extends Component {
         window.location.href = '/logout';
     }
 
-    componentWillReceiveProps(nextProps){
-       // console.log(nextProps);
+    componentDidMount(){
+        let selectedPage = this.props.location.pathname == "/" ? 'dblist' : this.props.location.pathname.slice(1);
+        this.setState({
+            currentPage: selectedPage
+        });
     }
 
     onTabClick(index){
         this.setState({
-            currentPage: index
+            currentPage: pages[index].url
         }, () => {
             this.props.history.push(pages[index].url)
         });
@@ -126,7 +129,7 @@ class Layout extends Component {
                         {
                             pages.map((page, index) => {
                                 return(
-                                    <Tab key={index} onClick={(event) => this.onTabClick(index)} label={page.label}/>
+                                    <Tab key={index} value={page.url} onClick={(event) => this.onTabClick(index)} label={page.label}/>
                                 );
                             })
                         }

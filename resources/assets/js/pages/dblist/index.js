@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Layout from '../layout';
 
-import {getDbNodeList, createNewDB} from '../../actions/dbNodeActions';
+import {getDbNodeList, createNewDB, deleteDBbyID} from '../../actions/dbNodeActions';
 import DBItem from './dbitem';
 import NewDbForm from './newDbForm';
 
@@ -52,6 +52,7 @@ class DBList extends Component {
 
         this.fetchAllDb = this.fetchAllDb.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleDeleteRequest = this.handleDeleteRequest.bind(this);
         this.renderConfirmModal = this.renderConfirmModal.bind(this);
         this.renderAddNewListItem = this.renderAddNewListItem.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
@@ -77,6 +78,15 @@ class DBList extends Component {
                 this.fetchAllDb();
             }
         })
+    }
+
+    handleDeleteRequest(){
+        deleteDBbyID({id: this.state.selected._id}).then((response) => {
+            if(response.success){
+                this.fetchAllDb();
+            }
+        });
+        this.handleClose();
     }
 
     handleClose(){
@@ -110,7 +120,7 @@ class DBList extends Component {
                     <Button variant="contained" size="medium" color="default" className={classes.button} onClick={this.handleClose}>
                         No
                     </Button>
-                    <Button variant="contained" size="medium" color="secondary" className={classes.button}>
+                    <Button variant="contained" size="medium" color="secondary" className={classes.button} onClick={this.handleDeleteRequest}>
                         Yes
                     </Button>
                 </div>

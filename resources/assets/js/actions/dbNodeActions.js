@@ -10,13 +10,21 @@ export function getDbNodeList(limit=10, offset=0) {
 }
 
 export function createNewDB(params) {
-    return axios.post('/api/dbnode/new', params)
-                .then((response) => {
-                    return response.data;
-                })
-                .catch((err) => {
-                    return err;
-                })
+    return postRequestToAPI('/api/dbnode/new', params);
+}
+
+export function deleteDBbyID(params) {
+    return postRequestToAPI('api/dbnode/delete', params);
+}
+
+function postRequestToAPI(url, params) {
+    return axios.post(url, params)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            return err;
+        })
 }
 
 function getResponseFromAPI(url) {

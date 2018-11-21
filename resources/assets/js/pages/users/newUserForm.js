@@ -49,7 +49,7 @@ class NewUserForm extends Component{
 
         if(user.length < 1 || email.length < 1 ){
             error = 'User Info can not be empty';
-        }else if(password.length < 6){
+        }else if(password.length < 4){
             error= 'Minimum Password Length is 6';
         }else if(password !== confirm){
             error = 'Password and Confirm password Mismatch';

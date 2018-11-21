@@ -51,7 +51,7 @@ class NewDbForm extends Component{
 
         if(title.length < 1 || host.length < 1 || port.length < 1 || name.length < 1 || user.length < 1 ){
             error = 'Database Properties can not be empty';
-        }else if(password.length < 6){
+        }else if(password.length < 4){
             error= 'Minimum Password Length is 6';
         }else if(password !== confirm){
             error = 'Password and Confirm password Mismatch';

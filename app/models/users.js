@@ -24,7 +24,7 @@ var userObject = {
     },
     password: {
         type : String,
-        minlength :[6, 'Password Minimum Length should be 6'],
+        minlength :[4, 'Password Minimum Length should be 6'],
         required : [true, 'User password Must be Strong']
     },
     addedBy: {

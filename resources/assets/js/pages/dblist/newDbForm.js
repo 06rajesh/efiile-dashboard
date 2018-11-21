@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -36,6 +38,7 @@ class NewDbForm extends Component{
             port: '3306',
             name: '',
             user: '',
+            enabled: false,
             password: '',
             confirm: '',
             error: ''
@@ -114,6 +117,24 @@ class NewDbForm extends Component{
                     </Grid>
                     <Grid item xs={6} className={classes.gridStyles}>
                         <TextField id="confirm" label="Confirm Password" type="password" name="confirm" value={this.state.confirm} onChange={this.handleChange} margin="normal" variant="outlined" fullWidth/>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Button variant="outlined" color="default" size="small" fullWidth>
+                            Check Connection
+                        </Button>
+                    </Grid>
+                    <Grid item xs={5}/>
+                    <Grid item xs={3}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    color="primary"
+                                    checked={this.state.enabled}
+                                    onChange={() => this.setState({enabled: !this.state.enabled})}
+                                />
+                            }
+                            label="Enabled"
+                        />
                     </Grid>
                     <Grid item xs={8}/>
                     <Grid item xs={4}>

@@ -4,9 +4,10 @@
 
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Layout from '../layout';
+
 
 import { withStyles } from '@material-ui/core/styles';
+import green from '@material-ui/core/colors/green';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -25,6 +26,12 @@ const styles = {
     },
     listContainer: {
         borderBottom: '1px solid #f1f1f1'
+    },
+    enabledClass: {
+        color: green[600]
+    },
+    disabledClass: {
+        color: 'rgba(0,0,0,0.6)'
     }
 };
 
@@ -42,15 +49,17 @@ class DbItem extends Component {
 
         let {item, classes, onItemClick, position} = this.props;
 
-        let secondaryText = () => {
+        let enabledProp = (item) => {
+            let typeClass = item.enable ? classes.enabledClass : classes.disabledClass;
+            let iconString = item.enable ? 'check_circle_outline' : 'highlight_off';
             return(
-                <Typography variant="body1">
-                    <Icon className={classes.listIcons}>get_app</Icon> {item.dbHost}{item.dbPort ? `:${item.dbPort}` : ''}
-                    &emsp;
-                    <Icon className={classes.listIcons}>check_circle</Icon> Enabled
+                <Typography variant="body1" color="inherit" className={typeClass}>
+                    <Icon className={classes.listIcons}>{iconString}</Icon> {item.enable ? 'Enabled' : 'Disabled' }
                 </Typography>
-            )
+            );
         };
+
+        let hostText = item.dbHost + ":" + (item.dbPort ? item.dbPort : '');
 
         return(
             <div className={classes.listContainer}>
@@ -58,13 +67,14 @@ class DbItem extends Component {
                     <Avatar>
                         <Icon>dns</Icon>
                     </Avatar>
-                    <ListItemText primary={item.title} secondary={secondaryText()} />
+                    <ListItemText primary={item.title} secondary={hostText}/>
+                    <ListItemText secondary={enabledProp(item)}/>
                     <ListItemSecondaryAction>
                         <IconButton aria-label="Comments" onClick={() => onItemClick(position)}>
                             <Icon>delete</Icon>
                         </IconButton>
                         <IconButton aria-label="Down" onClick={() => this.setState({open : !this.state.open})}>
-                            <Icon>keyboard_arrow_down</Icon>
+                            <Icon>{this.state.open ? 'keyboard_arrow_up':'keyboard_arrow_down'}</Icon>
                         </IconButton>
                     </ListItemSecondaryAction>
                 </ListItem>

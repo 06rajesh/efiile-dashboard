@@ -3,6 +3,7 @@
  */
 
 var url = require('url');
+//var mysql = require('mysql');
 var DBNode = require('../models/dbnode');
 
 module.exports = {
@@ -89,7 +90,18 @@ module.exports = {
                 }
             }
         });
-    }
+    },
+
+    // checkSqlConnection: function (req, res, next) {
+    //     var con = mysql.createConnection({
+    //         host: "localhost",
+    //         port: '3300',
+    //         user: "root",
+    //         password: "root"
+    //     });
+    //
+    //
+    // }
 };
 
 function errResponse(res, next, err, msg='An Error Occurred') {

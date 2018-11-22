@@ -27,6 +27,9 @@ const styles = {
     listContainer: {
         borderBottom: '1px solid #f1f1f1'
     },
+    primaryText: {
+        flex: 1
+    },
     enabledClass: {
         color: green[600]
     },
@@ -47,7 +50,7 @@ class DbItem extends Component {
 
     render(){
 
-        let {item, classes, onItemClick, position} = this.props;
+        let {item, classes, onDelete, onEdit, position} = this.props;
 
         let enabledProp = (item) => {
             let typeClass = item.enable ? classes.enabledClass : classes.disabledClass;
@@ -67,10 +70,13 @@ class DbItem extends Component {
                     <Avatar>
                         <Icon>dns</Icon>
                     </Avatar>
-                    <ListItemText primary={item.title} secondary={hostText}/>
+                    <ListItemText primary={item.title} secondary={hostText} className={classes.primaryText}/>
                     <ListItemText secondary={enabledProp(item)}/>
                     <ListItemSecondaryAction>
-                        <IconButton aria-label="Comments" onClick={() => onItemClick(position)}>
+                        <IconButton aria-label="Comments" onClick={() => onEdit(position)}>
+                            <Icon>edit</Icon>
+                        </IconButton>
+                        <IconButton aria-label="Comments" onClick={() => onDelete(position)}>
                             <Icon>delete</Icon>
                         </IconButton>
                         <IconButton aria-label="Down" onClick={() => this.setState({open : !this.state.open})}>
@@ -90,13 +96,14 @@ class DbItem extends Component {
             </div>
         );
     }
-};
+}
 
 DbItem.propTypes = {
     item: PropTypes.object,
     position: PropTypes.number,
     classes : PropTypes.object.isRequired,
-    onItemClick: PropTypes.func
+    onDelete: PropTypes.func,
+    onEdit  : PropTypes.func
 };
 
 export default withStyles(styles)(DbItem);

@@ -48,6 +48,24 @@ class NewDbForm extends Component{
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentDidMount(){
+        let {type, selected} = this.props;
+
+        if(type === 'edit'){
+            this.setState({
+                id: selected._id,
+                title: selected.title ? selected.title : '',
+                host : selected.dbHost ? selected.dbHost : '',
+                port: selected.dbPort ? selected.dbPort : '',
+                name: selected.dbName ? selected.dbName : '',
+                user: selected.dbUser ? selected.dbUser : '',
+                enabled: selected.enable ? selected.enable : false,
+                password: selected.dbPassword ? selected.dbPassword : '',
+                confirm: selected.dbPassword ? selected.dbPassword : '',
+            });
+        }
+    }
+
     handleSubmit(){
         let {title, host, port, name, user, password, confirm} = this.state;
         let error = '';
@@ -89,7 +107,7 @@ class NewDbForm extends Component{
             <form onSubmit={this.handleSubmit}>
                 <Grid container spacing={24}>
                     <Grid item xs={12} className={classes.gridStyles}>
-                        <Typography variant="h6" align="center">Add New Database</Typography>
+                        <Typography variant="h6" align="center">{this.props.type === 'new' ? 'Add New Database' : 'Edit Database'}</Typography>
                     </Grid>
                     {   this.state.error.length > 0 &&
                         <Grid item xs={12} className={classes.gridStyles}>
@@ -150,8 +168,14 @@ class NewDbForm extends Component{
 }
 
 NewDbForm.propTypes = {
-    classes : PropTypes.object.isRequired,
-    onSubmit : PropTypes.func
+    classes  : PropTypes.object.isRequired,
+    onSubmit : PropTypes.func,
+    type     : PropTypes.oneOf(['edit', 'new']),
+    selected : PropTypes.object
+};
+
+NewDbForm.defaultProps = {
+    type: 'new'
 };
 
 export default withStyles(styles)(NewDbForm);

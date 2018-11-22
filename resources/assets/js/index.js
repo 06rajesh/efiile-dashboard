@@ -12,6 +12,7 @@ import '../sass/app.scss';
 import store from './store';
 import DBList from './pages/dblist';
 import Users from './pages/users';
+import ApiKey from './pages/apikey';
 import NotFound from './pages/notfound';
 
 let Root = ({store}) => (
@@ -21,6 +22,7 @@ let Root = ({store}) => (
                 <Route exact path="/" component={DBList} />
                 <Route path="/dblist" component={DBList} />
                 <Route path="/users" component={Users} />
+                <Route path="/api-key" component={ApiKey} />
                 <Route component={NotFound} />
             </Switch>
         </Router>

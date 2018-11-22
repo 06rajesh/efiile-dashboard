@@ -6,12 +6,13 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Layout from '../layout';
 
-import {getDbNodeList, createNewDB, deleteDBbyID} from '../../actions/dbNodeActions';
+import {getDbNodeList, createNewDB, deleteDBbyID, updateDBDoc} from '../../actions/dbNodeActions';
 import DBItem from './dbitem';
 import NewDbForm from './newDbForm';
 
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import List from '@material-ui/core/List';
@@ -19,6 +20,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme => ({
     paper: {
@@ -34,6 +36,10 @@ const styles = theme => ({
     button: {
         margin: theme.spacing.unit * 0.5,
         float: 'right'
+    },
+    snackBarError: {
+        maxWidth: '100%',
+        backgroundColor: theme.palette.error.dark,
     }
 });
 
@@ -47,7 +53,9 @@ class DBList extends Component {
             selected: null,
             open: false,
             newModal: false,
-            newDb: {}
+            editModal: false,
+            newDb: {},
+            error: ''
         };
 
         this.fetchAllDb = this.fetchAllDb.bind(this);
@@ -55,8 +63,10 @@ class DBList extends Component {
         this.handleDeleteRequest = this.handleDeleteRequest.bind(this);
         this.renderConfirmModal = this.renderConfirmModal.bind(this);
         this.renderAddNewListItem = this.renderAddNewListItem.bind(this);
-        this.onItemClick = this.onItemClick.bind(this);
+        this.onDeleteItemClick = this.onDeleteItemClick.bind(this);
+        this.onEditItemClick = this.onEditItemClick.bind(this);
         this.createNewDatabase = this.createNewDatabase.bind(this);
+        this.editCurrentDatabase = this.editCurrentDatabase.bind(this);
     }
 
     componentDidMount(){
@@ -76,6 +86,23 @@ class DBList extends Component {
         createNewDB(params).then((response) => {
             if(response.success){
                 this.fetchAllDb();
+            }else{
+                this.setState({
+                    error: response.message
+                });
+            }
+        })
+    }
+
+    editCurrentDatabase(params){
+        this.handleClose();
+        updateDBDoc(params).then((response) => {
+            if(response.success){
+                this.fetchAllDb();
+            }else{
+                this.setState({
+                    error: response.message
+                });
             }
         })
     }
@@ -90,14 +117,22 @@ class DBList extends Component {
     }
 
     handleClose(){
-        this.setState({ open: false, newModal: false });
+        this.setState({ open: false, newModal: false, editModal: false });
     }
 
-    onItemClick(itemIndex){
+    onDeleteItemClick(itemIndex){
         this.setState({
             selected: this.state.dblist[itemIndex],
         }, () => {
             this.setState({open: true});
+        });
+    }
+
+    onEditItemClick(itemIndex){
+        this.setState({
+            selected: this.state.dblist[itemIndex],
+        }, () => {
+            this.setState({editModal: true});
         });
     }
 
@@ -145,6 +180,23 @@ class DBList extends Component {
         );
     }
 
+    renderEditModal(){
+        let {classes} = this.props;
+
+        return(
+            <Modal
+                aria-labelledby="edit-dbform-title"
+                aria-describedby="edit-dbform-description"
+                open={this.state.editModal}
+                onClose={this.handleClose}
+            >
+                <div className={classes.paper}>
+                    <NewDbForm selected = {this.state.selected} type="edit" onSubmit={this.editCurrentDatabase}/>
+                </div>
+            </Modal>
+        );
+    }
+
     renderAddNewListItem(){
         return(
             <ListItem button onClick={() => this.setState({newModal: true})}>
@@ -160,16 +212,28 @@ class DBList extends Component {
 
         let {classes} = this.props;
 
+        const action = (
+            <IconButton color="inherit" size="small" onClick={() => this.setState({error: ''})}>
+                <Icon>close</Icon>
+            </IconButton>
+        );
+
         let listItems = this.state.dblist.map((item, index) => {
             return(
-                <DBItem item={item} key={index} position={index} onItemClick={this.onItemClick}/>
+                <DBItem item={item} key={index} position={index} onDelete={this.onDeleteItemClick} onEdit={this.onEditItemClick}/>
             );
         });
 
         return(
             <Layout title="Database Listing" pageIcon="dns">
                 {this.renderAddModal()}
+                {this.renderEditModal()}
                 {this.renderConfirmModal()}
+                {
+                    this.state.error.length > 0 &&
+                    <SnackbarContent className={classes.snackBarError} message={this.state.error}
+                                     action={action}/>
+                }
                 <List>
                     {this.renderAddNewListItem()}
                     {listItems}

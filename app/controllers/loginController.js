@@ -18,9 +18,7 @@ module.exports = {
         if(req.body.name){
             verifyUserPass(req.body, function (verified, response) {
                 if(verified){
-                    req.session.user = response.username;
-                    req.session.id = response._id;
-                    req.session.level = response.level;
+                    req.session.user = response;
                     req.session.isLoggedIn = true;
                     res.redirect('/');
                 }else{

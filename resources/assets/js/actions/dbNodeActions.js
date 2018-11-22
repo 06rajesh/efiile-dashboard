@@ -13,6 +13,10 @@ export function createNewDB(params) {
     return postRequestToAPI('/api/dbnode/new', params);
 }
 
+export function updateDBDoc(params) {
+    return postRequestToAPI('/api/dbnode/update', params);
+}
+
 export function deleteDBbyID(params) {
     return postRequestToAPI('api/dbnode/delete', params);
 }

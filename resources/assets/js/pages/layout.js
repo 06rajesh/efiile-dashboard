@@ -75,6 +75,10 @@ const pages = [
     {
         label: 'Users',
         url: 'users'
+    },
+    {
+        label: 'Api Key',
+        url: 'api-key'
     }
 ];
 

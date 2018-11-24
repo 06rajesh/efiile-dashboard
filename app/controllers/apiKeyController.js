@@ -49,8 +49,8 @@ module.exports = {
 
         ApiKey
             .find({})
-            .limit(params.limit ? params.limit : 10)
-            .skip(params.offset ? params.offset : 0)
+            .limit(params.limit ? parseInt(params.limit) : 10)
+            .skip(params.offset ? parseInt(params.offset) : 0)
             .sort({ createdAt: -1 })
             .select({ _id: 1, key: 1, enable: 1, createdAt: 1})
             .exec(function(err, keys){

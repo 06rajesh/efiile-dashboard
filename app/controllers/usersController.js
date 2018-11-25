@@ -10,11 +10,13 @@ module.exports = {
         var params = req.body;
 
         var userObject = new User({
-            username: params.user,
-            email: params.email,
-            password: params.password,
-            addedBy: params.owner,
-            level: params.level ? params.level : 0
+            username    : params.user,
+            email       : params.email,
+            password    : params.password,
+            addedBy     : req.session.user._id,
+            canAddDB    : params.add_db ? params.add_db : false,
+            canAddUser  : params.add_user ? params.add_user : false,
+            canAddKey   : params.add_key ? params.add_key : false,
         });
 
         var error = userObject.validateSync();
@@ -50,7 +52,7 @@ module.exports = {
             .find({})
             .limit(10)
             .sort({ createdAt: -1 })
-            .select({ _id: 1, username: 1, email: 1, level: 1, createdAt: 1})
+            .select({ _id: 1, username: 1, email: 1, canAddDB: 1, canAddUser: 1, canAddKey: 1, createdAt: 1})
             .exec(function(err, users){
                 if(err){
                     return errResponse(res, next, err, "Error Occured, Users Could Not Be Fetched");

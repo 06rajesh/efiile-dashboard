@@ -18,6 +18,7 @@ module.exports = {
             dbHost : params.host,
             dbPort : params.port ? params.port : '3306',
             enable : params.enabled ? params.enabled : false,
+            owner  : req.session.user._id,
             title  : params.title,
         });
 
@@ -50,9 +51,13 @@ module.exports = {
     },
 
     getAll: function (req, res, next) {
+        var url_parts = url.parse(req.url, true);
+        var params = url_parts.query;
+
         DBNode
             .find({})
-            .limit(10)
+            .limit(params.limit ? parseInt(params.limit) : 10)
+            .skip(params.offset ? parseInt(params.offset) : 0)
             .sort({ createdAt: -1 })
             .select({ _id: 1, dbName: 1, dbUser: 1, dbPassword: 1, dbHost:1, dbPort: 1, enable: 1, title: 1, createdAt: 1})
             .exec(function(err, users){

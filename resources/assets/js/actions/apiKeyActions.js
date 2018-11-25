@@ -14,6 +14,14 @@ export function createNewApiKey(params) {
     return postRequestToAPI('/api/apikey/new', params);
 }
 
+export function deleteById(params) {
+    return postRequestToAPI('/api/apikey/delete', params);
+}
+
+export function updateKeyStatus(params) {
+    return postRequestToAPI('/api/apikey/update', params);
+}
+
 function postRequestToAPI(url, params) {
     return axios.post(url, params)
         .then((response) => {

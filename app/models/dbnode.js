@@ -4,7 +4,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-//var ObjectId = mongoose.Schema.Types.ObjectId;
+var ObjectId = mongoose.Schema.Types.ObjectId;
 
 
 var dbNodeObject = {
@@ -14,6 +14,7 @@ var dbNodeObject = {
     dbHost : { type: String, required: [true, 'Please Enter DB Hostname.'] },
     dbPort : { type: String, required: [true, 'Please Enter DB Port.'] },
     enable : { type: Boolean },
+    owner  : { type: ObjectId, ref: 'Users'},
     title  : { type: String, required: [true, 'Please Enter DB Title.'] },
 };
 

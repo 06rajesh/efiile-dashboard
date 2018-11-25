@@ -36,5 +36,7 @@ routes.post('/dbnode/delete', dbNodeCtrl.deleteById);
 
 routes.get('/apikey/all', apiKeyCtrl.getAll);
 routes.post('/apikey/new', apiKeyCtrl.create);
+routes.post('/apikey/update', apiKeyCtrl.update);
+routes.post('/apikey/delete', apiKeyCtrl.deleteById);
 
 module.exports = routes;

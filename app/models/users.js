@@ -31,7 +31,9 @@ var userObject = {
         type: ObjectId,
         ref: 'Users'
     },
-    level: {type: Number, required: [true, 'User Level Must be assigned']}
+    canAddDB: {type: Boolean},
+    canAddUser: {type: Boolean},
+    canAddKey: {type: Boolean},
 };
 
 var userSchema = new Schema(userObject, { timestamps : true, collection: 'Users' });

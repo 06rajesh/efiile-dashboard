@@ -67,7 +67,66 @@ module.exports = {
     },
 
     deleteById: function (req, res, next) {
+        var params = req.body;
 
+        ApiKey.findByIdAndRemove({ _id: params.id}, function (err, response) {
+            if(err){
+                return errResponse(res, next, err);
+            }else{
+                if(response){
+                    res.json({
+                        message: `ApiKey ${response.key} has been deleted`,
+                        success: true,
+                        status: 200
+                    });
+                }else{
+                    res.json({
+                        message: 'No ApiKey Found with that Id',
+                        success: false,
+                        status: 204
+                    });
+                }
+            }
+        });
+    },
+
+    update: function (req, res, next) {
+        var params = req.body;
+
+        ApiKey.findById(params.id, function (err, apikey) {
+            if (err) {
+                return errResponse(res, next, err);
+            } else {
+                apikey.enable = params.enabled;
+
+                var error = apikey.validateSync();
+
+                if (error) {
+                    res.json({
+                        message: error.message,
+                        success: false,
+                        status: 400
+                    });
+                } else {
+                    apikey.save(function (err) {
+
+                        if (err) {
+                            let msg = 'Database Credential Could Not Be Saved';
+                            if (err.message.indexOf('duplicate key error'))
+                                msg = 'Error: Database Name must be Unique';
+
+                            return errResponse(res, next, err, msg);
+                        }
+
+                        res.json({
+                            message: 'Database Credential Updated Successfully',
+                            success: true,
+                            status: 200
+                        });
+                    });
+                }
+            }
+        });
     }
 };
 

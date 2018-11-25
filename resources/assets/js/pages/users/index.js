@@ -16,6 +16,15 @@ import Grid from '@material-ui/core/Grid';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
+import Avatar from '@material-ui/core/Avatar';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
 
 const styles = theme => ({
     paper: {
@@ -31,6 +40,9 @@ const styles = theme => ({
     snackBarError: {
         maxWidth: '100%',
         backgroundColor: theme.palette.error.dark,
+    },
+    tableIcon: {
+        padding: '6px'
     }
 });
 
@@ -95,6 +107,49 @@ class Users extends Component{
         );
     }
 
+    renderKeyRow(){
+        let {users} = this.state;
+        let {classes} = this.props;
+
+        if(users) {
+            return users.map((row, index) => {
+                return (
+                    <TableRow key={index}>
+                        <TableCell component="th" padding="dense">
+                            <Avatar className={classes.tableIconStyle}><Icon>person</Icon></Avatar>
+                        </TableCell>
+                        <TableCell>
+                            {row.username}
+                        </TableCell>
+                        <TableCell>
+                            {row.email}
+                        </TableCell>
+                        <TableCell>
+                            <IconButton className={classes.tableIcon}>
+                                <Icon>{row.canAddDB ? 'check_box' : 'check_box_outline_blank'}</Icon>
+                            </IconButton>
+                        </TableCell>
+                        <TableCell>
+                            <IconButton className={classes.tableIcon}>
+                                <Icon>{row.canAddUser ? 'check_box' : 'check_box_outline_blank'}</Icon>
+                            </IconButton>
+                        </TableCell>
+                        <TableCell>
+                            <IconButton className={classes.tableIcon}>
+                                <Icon>{row.canAddKey ? 'check_box' : 'check_box_outline_blank'}</Icon>
+                            </IconButton>
+                        </TableCell>
+                        <TableCell numeric>
+                            <IconButton className={classes.tableIcon}>
+                                <Icon>delete</Icon>
+                            </IconButton>
+                        </TableCell>
+                    </TableRow>
+                );
+            });
+        }
+    }
+
     render(){
 
         let {classes} = this.props;
@@ -104,12 +159,6 @@ class Users extends Component{
                 <Icon>close</Icon>
             </IconButton>
         );
-
-        let userItems = this.state.users.map((item, index) => {
-            return(
-                <UserItem user={item} position={index} key={index}/>
-            );
-        });
 
         return(
             <Layout title="Users List" pageIcon="supervisor_account">
@@ -122,8 +171,37 @@ class Users extends Component{
                                              action={action}/>
                         </Grid>
                     }
-                    <UserItem type="AddNew" onClick={() => this.setState({addModal: true})}/>
-                    {userItems}
+                    <Grid item xs={12} className={classes.gridStyles}>
+                        <Paper>
+                            <Table className={classes.table} padding="dense">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell padding="dense"/>
+                                        <TableCell>Username</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell padding="none">Database</TableCell>
+                                        <TableCell padding="none">User</TableCell>
+                                        <TableCell padding="none">Api Key</TableCell>
+                                        <TableCell numeric>Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow hover onClick={() => this.setState({addModal: true})} style={{cursor: 'pointer'}}>
+                                        <TableCell component="th" padding="dense">
+                                            <Avatar className={classes.tableIconStyle}><Icon>add</Icon></Avatar>
+                                        </TableCell>
+                                        <TableCell>Add New </TableCell>
+                                        <TableCell/>
+                                        <TableCell numeric padding="none"/>
+                                        <TableCell numeric padding="none"/>
+                                        <TableCell numeric padding="none"/>
+                                        <TableCell numeric/>
+                                    </TableRow>
+                                    {this.renderKeyRow()}
+                                </TableBody>
+                            </Table>
+                        </Paper>
+                    </Grid>
                 </Grid>
             </Layout>
         )

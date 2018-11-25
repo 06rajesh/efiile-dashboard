@@ -52,9 +52,9 @@ class UserItem extends Component {
                         <Typography variant="caption" align="center">
                             {user.email}
                         </Typography>
-                        <Typography variant="subtitle2" align="center">
-                            Level: {user.level}
-                        </Typography>
+                        {/*<Typography variant="subtitle2" align="center">*/}
+                            {/*Level: {user.level}*/}
+                        {/*</Typography>*/}
                     </CardContent>
                     <CardActions>
                         <Button size="small">Delete</Button>

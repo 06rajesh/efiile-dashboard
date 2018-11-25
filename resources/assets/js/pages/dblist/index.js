@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import Layout from '../layout';
 
 import {getDbNodeList, createNewDB, deleteDBbyID, updateDBDoc} from '../../actions/dbNodeActions';
+import Pagination from '../../components/pagination';
 import DBItem from './dbitem';
 import NewDbForm from './newDbForm';
 
@@ -50,6 +51,8 @@ class DBList extends Component {
 
         this.state = {
             dblist: [],
+            limit: 10,
+            offset: 0,
             selected: null,
             open: false,
             newModal: false,
@@ -73,10 +76,12 @@ class DBList extends Component {
         this.fetchAllDb();
     }
 
-    fetchAllDb(){
-        getDbNodeList().then((response) => {
+    fetchAllDb(limit=10, offset=0){
+        getDbNodeList(limit, offset).then((response) => {
             this.setState({
-                dblist: response.data
+                dblist: response.data,
+                limit: limit,
+                offset: offset
             });
         });
     }
@@ -98,7 +103,7 @@ class DBList extends Component {
         this.handleClose();
         updateDBDoc(params).then((response) => {
             if(response.success){
-                this.fetchAllDb();
+                this.fetchAllDb(this.state.limit, this.state.offset);
             }else{
                 this.setState({
                     error: response.message
@@ -108,9 +113,11 @@ class DBList extends Component {
     }
 
     handleDeleteRequest(){
-        deleteDBbyID({id: this.state.selected._id}).then((response) => {
+        let {selected, limit, offset} = this.state;
+
+        deleteDBbyID({id: selected._id}).then((response) => {
             if(response.success){
-                this.fetchAllDb();
+                this.fetchAllDb(limit, offset);
             }
         });
         this.handleClose();
@@ -238,6 +245,7 @@ class DBList extends Component {
                     {this.renderAddNewListItem()}
                     {listItems}
                 </List>
+                <Pagination itemList={this.state.dblist} limit={this.state.limit} offset={this.state.offset} fetchAction={this.fetchAllDb.bind(this)}/>
             </Layout>
         )
     }

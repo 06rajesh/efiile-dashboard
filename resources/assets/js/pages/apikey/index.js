@@ -7,12 +7,13 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Layout from '../layout';
 
-import {createNewApiKey, getApiKeyList} from '../../actions/apiKeyActions';
+import {createNewApiKey, getApiKeyList, deleteById, updateKeyStatus} from '../../actions/apiKeyActions';
+import Pagination from '../../components/pagination';
 import NewApiKey from './newApiKey';
+import ConfirmModal from './confirmModal';
 
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Button from '@material-ui/core/Button';
 import green from '@material-ui/core/colors/green';
 import Modal from '@material-ui/core/Modal';
@@ -60,6 +61,13 @@ const styles = theme => ({
     },
     disabledClass: {
         color: 'rgba(0,0,0,0.6)'
+    },
+    tableIcon: {
+        padding: '6px'
+    },
+    paginationContainer: {
+        marginTop: '15px',
+        textAlign: 'right'
     }
 });
 
@@ -69,14 +77,23 @@ class ApiKey extends Component {
         super(props);
 
         this.state = {
+            limit: 10,
+            offset: 0,
             keyList: [],
-            newModal: false
+            selected: null,
+            newModal: false,
+            showDeleteModal: false,
+            showEditModal: false
         };
 
         this.renderNewKeyForm = this.renderNewKeyForm.bind(this);
         this.renderKeyRow = this.renderKeyRow.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.showDeleteConfirmDialogue = this.showDeleteConfirmDialogue.bind(this);
+        this.showEditConfirmDialogue = this.showEditConfirmDialogue.bind(this);
+        this.deleteApiKey = this.deleteApiKey.bind(this);
+        this.toggleEnableKey = this.toggleEnableKey.bind(this);
     }
 
     componentDidMount(){
@@ -92,16 +109,64 @@ class ApiKey extends Component {
         });
     }
 
+    showDeleteConfirmDialogue(params){
+        this.setState({
+            showDeleteModal: true,
+            selected: params
+        });
+    }
+
+    showEditConfirmDialogue(params){
+        this.setState({
+            showEditModal: true,
+            selected: params
+        });
+    }
+
+    deleteApiKey(){
+        let {selected, limit, offset} = this.state;
+        if(selected !== null){
+            deleteById({id: selected._id}).then((response) => {
+                if(response.success){
+                    this.fetchApiKey(limit, offset);
+                }
+                this.handleClose();
+            })
+        }
+    }
+
+    toggleEnableKey(){
+        let {selected, limit, offset} = this.state;
+        if(selected !== null){
+            let changedKey = {
+                id: selected._id,
+                enabled: !selected.enable
+            };
+
+            updateKeyStatus(changedKey).then((response) => {
+                if(response.success){
+                    this.fetchApiKey(limit, offset);
+                }
+                this.handleClose();
+            })
+        }
+    }
+
     handleClose(){
         this.setState({
-            newModal: false
+            newModal: false,
+            showDeleteModal: false,
+            showEditModal: false,
+            selected: null
         });
     }
 
     fetchApiKey (limit=10, offset=0) {
         getApiKeyList(limit, offset).then((response) => {
             this.setState({
-                keyList: response.data
+                keyList: response.data,
+                limit: limit,
+                offset: offset
             });
         })
     }
@@ -133,18 +198,23 @@ class ApiKey extends Component {
 
                 return (
                     <TableRow key={index}>
-                        <TableCell component="th">
+                        <TableCell component="th" padding="dense">
                             <Avatar className={classes.tableIconStyle}><Icon>vpn_key</Icon></Avatar>
                         </TableCell>
                         <TableCell scope="row">
                             {row.key}
                         </TableCell>
-                        <TableCell numeric>
-                            <Typography variant="body1" color="inherit">
+                        <TableCell>
+                            <IconButton className={classes.tableIcon} onClick={() => this.showEditConfirmDialogue(row)}>
                                 <Icon className={typeClass}>{iconString}</Icon>
-                            </Typography>
+                            </IconButton>
                         </TableCell>
-                        <TableCell numeric>{ApiKey.timeSince(row.createdAt)}</TableCell>
+                        <TableCell numeric padding="none">{ApiKey.timeSince(row.createdAt)}</TableCell>
+                        <TableCell numeric>
+                            <IconButton className={classes.tableIcon} onClick={() => this.showDeleteConfirmDialogue(row)}>
+                                <Icon>delete</Icon>
+                            </IconButton>
+                        </TableCell>
                     </TableRow>
                 );
             });
@@ -163,35 +233,50 @@ class ApiKey extends Component {
         return(
             <Layout title="Api Key List" pageIcon="vpn_key">
                 {this.renderNewKeyForm()}
+                <ConfirmModal
+                    message="Do You Really Want Delete This Key?"
+                    active={this.state.showDeleteModal}
+                    onClose={this.handleClose} onSubmit={this.deleteApiKey}
+                />
+                <ConfirmModal
+                    message="Do You Really want to Enable/Disable This Api Key?"
+                    active={this.state.showEditModal}
+                    onClose={this.handleClose} onSubmit={this.toggleEnableKey}
+                />
                 <Paper>
-                    <Table className={classes.table}>
+                    <Table className={classes.table} padding="dense">
                         <TableHead>
                             <TableRow>
-                                <TableCell/>
+                                <TableCell padding="dense"/>
                                 <TableCell>Key</TableCell>
-                                <TableCell numeric>Enabled</TableCell>
-                                <TableCell numeric>Created</TableCell>
+                                <TableCell padding="none">Enabled</TableCell>
+                                <TableCell numeric padding="none">Created</TableCell>
+                                <TableCell numeric>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow hover onClick={() => this.setState({newModal: true})} style={{cursor: 'pointer'}}>
-                                <TableCell component="th">
+                                <TableCell component="th" padding="dense">
                                     <Avatar className={classes.tableIconStyle}><Icon>add</Icon></Avatar>
                                 </TableCell>
                                 <TableCell>Add New Key</TableCell>
-                                <TableCell numeric/>
+                                <TableCell numeric padding="none"/>
+                                <TableCell numeric padding="none"/>
                                 <TableCell numeric/>
                             </TableRow>
                             {this.renderKeyRow()}
                         </TableBody>
                     </Table>
                 </Paper>
+                <Pagination limit={this.state.limit} offset={this.state.offset} itemList={this.state.keyList} fetchAction={this.fetchApiKey.bind(this)}/>
             </Layout>
         )
     }
 
 }
 
+
+// return time ago from date string
 ApiKey.timeSince = function (date) {
     date = new Date(date);
     let seconds = Math.floor((new Date() - date) / 1000);

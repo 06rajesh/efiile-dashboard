@@ -10,11 +10,9 @@ import Layout from '../layout';
 import {createNewApiKey, getApiKeyList, deleteById, updateKeyStatus} from '../../actions/apiKeyActions';
 import Pagination from '../../components/pagination';
 import NewApiKey from './newApiKey';
-import ConfirmModal from './confirmModal';
+import ConfirmModal from '../../components/confirmModal';
 
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import green from '@material-ui/core/colors/green';
 import Modal from '@material-ui/core/Modal';
 import Avatar from '@material-ui/core/Avatar';
@@ -97,13 +95,13 @@ class ApiKey extends Component {
     }
 
     componentDidMount(){
-        this.fetchApiKey(10, 0);
+        this.fetchApiKey(this.state.limit, 0);
     }
 
     handleSubmit(params){
         createNewApiKey(params).then((response) => {
             if(response.success){
-                this.fetchApiKey(10, 0);
+                this.fetchApiKey(this.state.limit, 0);
                 this.handleClose();
             }
         });

@@ -6,11 +6,13 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Layout from '../layout';
 
-import {getUsersList, createNewUser} from '../../actions/usersActions';
-import UserItem from './userItem';
+import {getUsersList, createNewUser, deleteUserById} from '../../actions/usersActions';
+import ConfirmModal from '../../components/confirmModal';
+import Pagination from '../../components/pagination';
 import NewUserForm from './newUserForm';
 
 import { withStyles } from '@material-ui/core/styles';
+import Green from '@material-ui/core/colors/green';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Grid from '@material-ui/core/Grid';
 import Modal from '@material-ui/core/Modal';
@@ -43,6 +45,12 @@ const styles = theme => ({
     },
     tableIcon: {
         padding: '6px'
+    },
+    activeColor: {
+        color: Green[600]
+    },
+    centerText: {
+        textAlign: 'center'
     }
 });
 
@@ -50,26 +58,57 @@ class Users extends Component{
     constructor(props){
         super(props);
         this.state = {
+            limit: 10,
+            offset: 0,
             users: [],
             addModal: false,
-            error: ''
+            error: '',
+            showConfirmModal: false,
+            selected: null
         };
 
         this.getAllUsers = this.getAllUsers.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
         this.renderAddModal = this.renderAddModal.bind(this);
         this.handleNewUserRequest = this.handleNewUserRequest.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.showDeleteConfirmDialogue = this.showDeleteConfirmDialogue.bind(this);
     }
 
     componentDidMount(){
-        this.getAllUsers();
+        this.getAllUsers(this.state.limit, 0);
     }
 
-    getAllUsers(){
-        getUsersList().then((response) => {
+    getAllUsers(limit=10, offset=0){
+        getUsersList(limit, offset).then((response) => {
             this.setState({
-                users: response.data
+                users: response.data,
+                limit: limit,
+                offset: offset
             });
+        });
+    }
+
+    deleteUser(){
+        let {selected, limit, offset} = this.state;
+
+        deleteUserById({id : selected._id}).then((response) => {
+            if(response.success){
+                this.getAllUsers(limit, offset);
+            }else{
+                this.setState({
+                    error: response.message
+                });
+            }
+            this.handleClose();
+        });
+
+    }
+
+    showDeleteConfirmDialogue(params){
+        this.setState({
+            selected: params,
+            showConfirmModal: true
         });
     }
 
@@ -77,7 +116,7 @@ class Users extends Component{
         this.handleClose();
         createNewUser(params).then((response) => {
             if(response.success){
-                this.getAllUsers();
+                this.getAllUsers(this.state.limit, this.state.offset);
             }else{
                 this.setState({
                     error: response.message
@@ -87,7 +126,11 @@ class Users extends Component{
     }
 
     handleClose(){
-        this.setState({addModal: false});
+        this.setState({
+            addModal        : false,
+            showConfirmModal: false,
+            selected        : null
+        });
     }
 
     renderAddModal(){
@@ -125,22 +168,22 @@ class Users extends Component{
                             {row.email}
                         </TableCell>
                         <TableCell>
-                            <IconButton className={classes.tableIcon}>
+                            <IconButton className={`${classes.tableIcon}` + (row.canAddDB ? ` ${classes.activeColor}` : ``)}>
                                 <Icon>{row.canAddDB ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
                         </TableCell>
                         <TableCell>
-                            <IconButton className={classes.tableIcon}>
+                            <IconButton className={`${classes.tableIcon}` + (row.canAddUser ? ` ${classes.activeColor}` : ``)}>
                                 <Icon>{row.canAddUser ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
                         </TableCell>
                         <TableCell>
-                            <IconButton className={classes.tableIcon}>
+                            <IconButton className={`${classes.tableIcon}` + (row.canAddKey ? ` ${classes.activeColor}` : ``)}>
                                 <Icon>{row.canAddKey ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
                         </TableCell>
                         <TableCell numeric>
-                            <IconButton className={classes.tableIcon}>
+                            <IconButton className={classes.tableIcon} onClick={() => this.showDeleteConfirmDialogue(row)}>
                                 <Icon>delete</Icon>
                             </IconButton>
                         </TableCell>
@@ -171,6 +214,11 @@ class Users extends Component{
                                              action={action}/>
                         </Grid>
                     }
+                    <ConfirmModal
+                        message="Do You Really want to Delete selected User?"
+                        active={this.state.showConfirmModal}
+                        onClose={this.handleClose} onSubmit={this.deleteUser}
+                    />
                     <Grid item xs={12} className={classes.gridStyles}>
                         <Paper>
                             <Table className={classes.table} padding="dense">
@@ -179,9 +227,9 @@ class Users extends Component{
                                         <TableCell padding="dense"/>
                                         <TableCell>Username</TableCell>
                                         <TableCell>Email</TableCell>
-                                        <TableCell padding="none">Database</TableCell>
-                                        <TableCell padding="none">User</TableCell>
-                                        <TableCell padding="none">Api Key</TableCell>
+                                        <TableCell padding="none" className={classes.centerText}>Database</TableCell>
+                                        <TableCell padding="none" className={classes.centerText}>User</TableCell>
+                                        <TableCell padding="none" className={classes.centerText}>Api Key</TableCell>
                                         <TableCell numeric>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -201,6 +249,7 @@ class Users extends Component{
                                 </TableBody>
                             </Table>
                         </Paper>
+                        <Pagination limit={this.state.limit} offset={this.state.offset} itemList={this.state.users} fetchAction={this.getAllUsers.bind(this)}/>
                     </Grid>
                 </Grid>
             </Layout>

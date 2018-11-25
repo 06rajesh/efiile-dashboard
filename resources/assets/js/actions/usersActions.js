@@ -9,8 +9,16 @@ export function getUsersList(limit=10, offset=0) {
     return getResponseFromAPI(`/api/users/all?limit=${limit}&offset=${offset}`);
 }
 
+export function deleteUserById(params) {
+    return postDataToAPI('/api/users/delete', params);
+}
+
 export function createNewUser(params) {
-    return axios.post('/api/users/new', params)
+   return postDataToAPI('/api/users/new', params);
+}
+
+function postDataToAPI(url, params) {
+    return axios.post(url, params)
         .then((response) => {
             return response.data;
         })

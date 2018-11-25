@@ -48,9 +48,13 @@ module.exports = {
     },
 
     getAll: function (req, res, next) {
+        var url_parts = url.parse(req.url, true);
+        var params = url_parts.query;
+
         User
             .find({})
-            .limit(10)
+            .limit(params.limit ? parseInt(params.limit) : 10)
+            .skip(params.offset ? parseInt(params.offset) : 0)
             .sort({ createdAt: -1 })
             .select({ _id: 1, username: 1, email: 1, canAddDB: 1, canAddUser: 1, canAddKey: 1, createdAt: 1})
             .exec(function(err, users){

@@ -9,6 +9,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
@@ -109,6 +110,9 @@ class NewUserForm extends Component{
                     <Grid item xs={6} className={classes.gridStyles}>
                         <TextField id="confirm" label="Confirm Password" type="password" name="confirm" value={this.state.confirm} onChange={this.handleChange} margin="normal" variant="outlined" fullWidth/>
                     </Grid>
+                    <Grid item xs={12} className={classes.gridStyles}>
+                        <FormLabel component="legend" style={{paddingTop: '12px'}}>Access Controls</FormLabel>
+                    </Grid>
                     <Grid item xs={4} className={classes.gridStyles}>
                         <FormControlLabel
                             control={
@@ -118,7 +122,7 @@ class NewUserForm extends Component{
                                     onChange={() => this.setState({add_db: !this.state.add_db})}
                                 />
                             }
-                            label="Can Add Database"
+                            label="Database"
                         />
                     </Grid>
                     <Grid item xs={4} className={classes.gridStyles}>
@@ -130,7 +134,7 @@ class NewUserForm extends Component{
                                     onChange={() => this.setState({add_user: !this.state.add_user})}
                                 />
                             }
-                            label="Can Add User"
+                            label="User"
                         />
                     </Grid>
                     <Grid item xs={4} className={classes.gridStyles}>
@@ -142,7 +146,7 @@ class NewUserForm extends Component{
                                     onChange={() => this.setState({add_key: !this.state.add_key})}
                                 />
                             }
-                            label="Can Add Key"
+                            label="API Key"
                         />
                     </Grid>
                     <Grid item xs={8}/>

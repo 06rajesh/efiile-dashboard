@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Layout from '../layout';
 
-import {getUsersList, createNewUser, deleteUserById} from '../../actions/usersActions';
+import {getUsersList, createNewUser, deleteUserById, updateUserAction} from '../../actions/usersActions';
 import ConfirmModal from '../../components/confirmModal';
 import Pagination from '../../components/pagination';
 import NewUserForm from './newUserForm';
@@ -62,6 +62,7 @@ class Users extends Component{
             offset: 0,
             users: [],
             addModal: false,
+            editModal: false,
             error: '',
             showConfirmModal: false,
             selected: null
@@ -69,9 +70,11 @@ class Users extends Component{
 
         this.getAllUsers = this.getAllUsers.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
+        this.updateUserInfo = this.updateUserInfo.bind(this);
         this.renderAddModal = this.renderAddModal.bind(this);
         this.handleNewUserRequest = this.handleNewUserRequest.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleItemEdit = this.handleItemEdit.bind(this);
         this.showDeleteConfirmDialogue = this.showDeleteConfirmDialogue.bind(this);
     }
 
@@ -105,6 +108,14 @@ class Users extends Component{
 
     }
 
+    handleItemEdit(itemIndex){
+        let {users} = this.state;
+        this.setState({
+            editModal: true,
+            selected: users[itemIndex],
+        });
+    }
+
     showDeleteConfirmDialogue(params){
         this.setState({
             selected: params,
@@ -125,12 +136,43 @@ class Users extends Component{
         })
     }
 
+    updateUserInfo(params){
+        updateUserAction(params).then((response) => {
+            if(response.success){
+                this.getAllUsers(this.state.limit, this.state.offset);
+            }else{
+                this.setState({
+                    error: response.message
+                });
+            }
+            this.handleClose();
+        });
+    }
+
     handleClose(){
         this.setState({
             addModal        : false,
             showConfirmModal: false,
+            editModal       : false,
             selected        : null
         });
+    }
+
+    renderEditUserModal(){
+        let {classes} = this.props;
+
+        return(
+            <Modal
+                aria-labelledby="edit-userform-title"
+                aria-describedby="edit-userform-description"
+                open={this.state.editModal}
+                onClose={this.handleClose}
+            >
+                <div className={classes.paper}>
+                    <NewUserForm type="edit" selected={this.state.selected} onSubmit={this.updateUserInfo}/>
+                </div>
+            </Modal>
+        );
     }
 
     renderAddModal(){
@@ -168,17 +210,26 @@ class Users extends Component{
                             {row.email}
                         </TableCell>
                         <TableCell>
-                            <IconButton className={`${classes.tableIcon}` + (row.canAddDB ? ` ${classes.activeColor}` : ``)}>
+                            <IconButton
+                                className={`${classes.tableIcon}` + (row.canAddDB ? ` ${classes.activeColor}` : ``)}
+                                onClick={() => this.handleItemEdit(index)}
+                            >
                                 <Icon>{row.canAddDB ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
                         </TableCell>
                         <TableCell>
-                            <IconButton className={`${classes.tableIcon}` + (row.canAddUser ? ` ${classes.activeColor}` : ``)}>
+                            <IconButton
+                                className={`${classes.tableIcon}` + (row.canAddUser ? ` ${classes.activeColor}` : ``)}
+                                onClick={() => this.handleItemEdit(index)}
+                            >
                                 <Icon>{row.canAddUser ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
                         </TableCell>
                         <TableCell>
-                            <IconButton className={`${classes.tableIcon}` + (row.canAddKey ? ` ${classes.activeColor}` : ``)}>
+                            <IconButton
+                                className={`${classes.tableIcon}` + (row.canAddKey ? ` ${classes.activeColor}` : ``)}
+                                onClick={() => this.handleItemEdit(index)}
+                            >
                                 <Icon>{row.canAddKey ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
                         </TableCell>
@@ -206,6 +257,7 @@ class Users extends Component{
         return(
             <Layout title="Users List" pageIcon="supervisor_account">
                 {this.renderAddModal()}
+                {this.renderEditUserModal()}
                 <Grid container spacing={24}>
                     {
                         this.state.error.length > 0 &&

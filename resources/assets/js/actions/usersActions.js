@@ -17,6 +17,10 @@ export function createNewUser(params) {
    return postDataToAPI('/api/users/new', params);
 }
 
+export function updateUserAction(params) {
+    return postDataToAPI('/api/users/update', params);
+}
+
 function postDataToAPI(url, params) {
     return axios.post(url, params)
         .then((response) => {

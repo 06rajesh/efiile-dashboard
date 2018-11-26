@@ -56,7 +56,7 @@ module.exports = {
             .limit(params.limit ? parseInt(params.limit) : 10)
             .skip(params.offset ? parseInt(params.offset) : 0)
             .sort({ createdAt: -1 })
-            .select({ _id: 1, username: 1, email: 1, canAddDB: 1, canAddUser: 1, canAddKey: 1, createdAt: 1})
+            .select({ _id: 1, username: 1, email: 1, password: 1, canAddDB: 1, canAddUser: 1, canAddKey: 1, createdAt: 1})
             .exec(function(err, users){
                 if(err){
                     return errResponse(res, next, err, "Error Occured, Users Could Not Be Fetched");
@@ -117,7 +117,52 @@ module.exports = {
                 }
             }
         });
-    }
+    },
+
+    update: function (req, res, next) {
+        var params = req.body;
+
+        User.findById(params.id, function (err, user) {
+            if(err){
+                return errResponse(res, next, err);
+            }else{
+                user.username    = params.user;
+                user.email       = params.email;
+                user.password    = params.password;
+                user.canAddDB    = params.add_db ? params.add_db : false;
+                user.canAddUser  = params.add_user ? params.add_user : false;
+                user.canAddKey   = params.add_key ? params.add_key : false;
+
+                var error = user.validateSync();
+
+                if(error){
+                    res.json({
+                        message: error.message,
+                        success: false,
+                        status: 400
+                    });
+                }else{
+                    user.save(function(err) {
+
+                        if (err){
+                            let msg = 'User Info Could Not Be Updated';
+                            if(err.message.indexOf('duplicate key error'))
+                                msg = 'Error: Database Name must be Unique';
+
+                            return errResponse(res, next, err, msg);
+                        }
+
+                        res.json({
+                            message: 'User Info Updated Successfully',
+                            success: true,
+                            status: 200
+                        });
+                    });
+                }
+            }
+        });
+
+    },
 };
 
 function errResponse(res, next, err, msg='An Error Occurred') {

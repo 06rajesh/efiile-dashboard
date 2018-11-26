@@ -36,7 +36,6 @@ class NewUserForm extends Component{
         this.state = {
             user: '',
             email: '',
-            level: 0,
             password: '',
             confirm: '',
             add_key: false,
@@ -47,6 +46,23 @@ class NewUserForm extends Component{
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidMount(){
+        let {type, selected} = this.props;
+
+        if(type === 'edit'){
+            this.setState({
+                id: selected._id,
+                user: selected.username ? selected.username : '',
+                email : selected.email ? selected.email : '',
+                password: selected.password ? selected.password : '',
+                confirm: selected.password ? selected.password : '',
+                add_key: selected.canAddKey ? selected.canAddKey: false,
+                add_db: selected.canAddDB ? selected.canAddDB: false,
+                add_user: selected.canAddUser ? selected.canAddUser: false,
+            });
+        }
     }
 
     handleSubmit(){
@@ -68,7 +84,6 @@ class NewUserForm extends Component{
         }else if(this.props.onSubmit){
             this.props.onSubmit(this.state);
         }
-
     }
 
     handleChange(event){
@@ -164,7 +179,13 @@ class NewUserForm extends Component{
 
 NewUserForm.propTypes = {
     classes : PropTypes.object.isRequired,
+    type     : PropTypes.oneOf(['edit', 'new']),
+    selected : PropTypes.object,
     onSubmit : PropTypes.func
+};
+
+NewUserForm.defaultProps = {
+    type : 'new'
 };
 
 export default withStyles(styles)(NewUserForm);

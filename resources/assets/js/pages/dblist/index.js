@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -41,6 +42,10 @@ const styles = theme => ({
     snackBarError: {
         maxWidth: '100%',
         backgroundColor: theme.palette.error.dark,
+    },
+    gridStyles: {
+        paddingTop: '0!important',
+        paddingBottom: '0!important'
     }
 });
 
@@ -154,17 +159,29 @@ class DBList extends Component {
                 onClose={this.handleClose}
             >
                 <div className={classes.paper}>
-                    {   this.state.selected !== null &&
-                        <Typography variant="subtitle1">
-                            Do You Really Want to Delele Database Credential of <b>{this.state.selected.dbName}</b> at <b>{this.state.selected.dbHost}</b>
-                        </Typography>
-                    }
-                    <Button variant="contained" size="medium" color="default" className={classes.button} onClick={this.handleClose}>
-                        No
-                    </Button>
-                    <Button variant="contained" size="medium" color="secondary" className={classes.button} onClick={this.handleDeleteRequest}>
-                        Yes
-                    </Button>
+                    <Grid container spacing={24}>
+                        <Grid item xs={12} className={classes.gridStyles}>
+                            <Typography variant="h6">Confirm Action</Typography>
+                        </Grid>
+                        {   this.state.selected !== null &&
+                            <Grid item xs={12} className={classes.gridStyles}>
+                                <Typography variant="subtitle1">
+                                    Do You Really Want to Delele Database Credential of <b>{this.state.selected.dbName}</b> at <b>{this.state.selected.dbHost}</b>
+                                </Typography>
+                            </Grid>
+                        }
+                        <Grid item xs={6} className={classes.gridStyles}/>
+                        <Grid item xs={3} className={classes.gridStyles}>
+                            <Button variant="contained" size="medium" color="primary" className={classes.button} onClick={this.handleDeleteRequest} fullWidth>
+                                Yes
+                            </Button>
+                        </Grid>
+                        <Grid item xs={3} className={classes.gridStyles}>
+                            <Button variant="contained" size="medium" color="default" className={classes.button} onClick={this.handleClose} fullWidth>
+                                No
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </div>
             </Modal>
         );

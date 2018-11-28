@@ -25,6 +25,7 @@ routes.use(function(req, res, next) {
 });
 
 routes.get('/users', userCtrl.findByName);
+routes.get('/users/current', userCtrl.getCurrent);
 routes.get('/users/all', userCtrl.getAll);
 routes.post('/users/new', userCtrl.create);
 routes.post('/users/update', userCtrl.update);

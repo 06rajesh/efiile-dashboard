@@ -47,6 +47,14 @@ module.exports = {
         }
     },
 
+    getCurrent: function (req, res, next) {
+        res.json({
+            user: req.session.user,
+            success: true,
+            status: 200
+        });
+    },
+
     getAll: function (req, res, next) {
         var url_parts = url.parse(req.url, true);
         var params = url_parts.query;

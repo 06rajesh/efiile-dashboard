@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import Layout from '../layout';
 
 import {getUsersList, createNewUser, deleteUserById, updateUserAction} from '../../actions/usersActions';
+import {CurrentUser} from '../../reducers/currentUser';
 import ConfirmModal from '../../components/confirmModal';
 import Pagination from '../../components/pagination';
 import NewUserForm from './newUserForm';
@@ -65,7 +66,7 @@ class Users extends Component{
             editModal: false,
             error: '',
             showConfirmModal: false,
-            selected: null
+            selected: null,
         };
 
         this.getAllUsers = this.getAllUsers.bind(this);
@@ -213,6 +214,7 @@ class Users extends Component{
                             <IconButton
                                 className={`${classes.tableIcon}` + (row.canAddDB ? ` ${classes.activeColor}` : ``)}
                                 onClick={() => this.handleItemEdit(index)}
+                                disabled={!CurrentUser.user.canAddUser}
                             >
                                 <Icon>{row.canAddDB ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
@@ -221,6 +223,7 @@ class Users extends Component{
                             <IconButton
                                 className={`${classes.tableIcon}` + (row.canAddUser ? ` ${classes.activeColor}` : ``)}
                                 onClick={() => this.handleItemEdit(index)}
+                                disabled={!CurrentUser.user.canAddUser}
                             >
                                 <Icon>{row.canAddUser ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
@@ -229,12 +232,15 @@ class Users extends Component{
                             <IconButton
                                 className={`${classes.tableIcon}` + (row.canAddKey ? ` ${classes.activeColor}` : ``)}
                                 onClick={() => this.handleItemEdit(index)}
+                                disabled={!CurrentUser.user.canAddUser}
                             >
                                 <Icon>{row.canAddKey ? 'check_box' : 'check_box_outline_blank'}</Icon>
                             </IconButton>
                         </TableCell>
                         <TableCell numeric>
-                            <IconButton className={classes.tableIcon} onClick={() => this.showDeleteConfirmDialogue(row)}>
+                            <IconButton className={classes.tableIcon}
+                                        onClick={() => this.showDeleteConfirmDialogue(row)}
+                                        disabled={!CurrentUser.user.canAddUser}>
                                 <Icon>delete</Icon>
                             </IconButton>
                         </TableCell>
@@ -286,7 +292,7 @@ class Users extends Component{
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    <TableRow hover onClick={() => this.setState({addModal: true})} style={{cursor: 'pointer'}}>
+                                    <TableRow hover onClick={() => (CurrentUser.user.canAddUser) ? this.setState({addModal: true}) : null} style={{cursor: 'pointer'}}>
                                         <TableCell component="th" padding="dense">
                                             <Avatar className={classes.tableIconStyle}><Icon>add</Icon></Avatar>
                                         </TableCell>

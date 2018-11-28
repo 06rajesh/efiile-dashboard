@@ -5,6 +5,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
+import {CurrentUser} from '../../reducers/currentUser';
 
 import { withStyles } from '@material-ui/core/styles';
 import green from '@material-ui/core/colors/green';
@@ -50,7 +51,7 @@ class DbItem extends Component {
 
     render(){
 
-        let {item, classes, onDelete, onEdit, position} = this.props;
+        let {item, classes, onDelete, onEdit, position, editable} = this.props;
 
         let enabledProp = (item) => {
             let typeClass = item.enable ? classes.enabledClass : classes.disabledClass;
@@ -73,10 +74,10 @@ class DbItem extends Component {
                     <ListItemText primary={item.title} secondary={hostText} className={classes.primaryText}/>
                     <ListItemText secondary={enabledProp(item)}/>
                     <ListItemSecondaryAction>
-                        <IconButton aria-label="Comments" onClick={() => onEdit(position)}>
+                        <IconButton aria-label="Comments" disabled={!editable} onClick={() => onEdit(position)}>
                             <Icon>edit</Icon>
                         </IconButton>
-                        <IconButton aria-label="Comments" onClick={() => onDelete(position)}>
+                        <IconButton aria-label="Comments" disabled={!editable} onClick={() => onDelete(position)}>
                             <Icon>delete</Icon>
                         </IconButton>
                         <IconButton aria-label="Down" onClick={() => this.setState({open : !this.state.open})}>
@@ -102,8 +103,13 @@ DbItem.propTypes = {
     item: PropTypes.object,
     position: PropTypes.number,
     classes : PropTypes.object.isRequired,
+    editable: PropTypes.bool,
     onDelete: PropTypes.func,
     onEdit  : PropTypes.func
+};
+
+DbItem.defaultProps = {
+    editable: false
 };
 
 export default withStyles(styles)(DbItem);

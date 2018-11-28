@@ -9,6 +9,10 @@ export function getUsersList(limit=10, offset=0) {
     return getResponseFromAPI(`/api/users/all?limit=${limit}&offset=${offset}`);
 }
 
+export function getCurrentUser() {
+    return getResponseFromAPI('api/users/current');
+}
+
 export function deleteUserById(params) {
     return postDataToAPI('/api/users/delete', params);
 }

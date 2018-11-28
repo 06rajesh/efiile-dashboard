@@ -4,7 +4,6 @@
 
 import React, {Component} from 'react';
 import Layout from '../layout';
-import Typography from '@material-ui/core/Typography';
 
 class NotFound extends Component {
 

@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import Layout from '../layout';
 
 import {getDbNodeList, createNewDB, deleteDBbyID, updateDBDoc} from '../../actions/dbNodeActions';
+import {CurrentUser} from '../../reducers/currentUser';
 import Pagination from '../../components/pagination';
 import DBItem from './dbitem';
 import NewDbForm from './newDbForm';
@@ -223,7 +224,7 @@ class DBList extends Component {
 
     renderAddNewListItem(){
         return(
-            <ListItem button onClick={() => this.setState({newModal: true})}>
+            <ListItem button onClick={() => (CurrentUser.user.canAddDB) ? this.setState({newModal: true}) : null}>
                 <Avatar>
                     <Icon>add</Icon>
                 </Avatar>
@@ -244,7 +245,7 @@ class DBList extends Component {
 
         let listItems = this.state.dblist.map((item, index) => {
             return(
-                <DBItem item={item} key={index} position={index} onDelete={this.onDeleteItemClick} onEdit={this.onEditItemClick}/>
+                <DBItem item={item} key={index} position={index} editable={CurrentUser.user.canAddDB} onDelete={this.onDeleteItemClick} onEdit={this.onEditItemClick}/>
             );
         });
 

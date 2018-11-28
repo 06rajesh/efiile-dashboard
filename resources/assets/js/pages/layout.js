@@ -13,10 +13,14 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-const styles = {
+import {CurrentUser} from '../reducers/currentUser';
+
+const styles = theme => ({
     root: {
         flexGrow: 1,
         padding: '10px',
@@ -34,6 +38,19 @@ const styles = {
     tabContainer: {
         backgroundColor: '#efefef',
         marginBottom: '3px'
+    },
+    profileMenu: {
+        position: 'absolute',
+        width: '200px',
+        top: 50,
+        right: theme.spacing.unit * 3,
+        padding: theme.spacing.unit
+    },
+    profileMenuContent: {
+        padding: theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
+        borderRadius: theme.shape.borderRadius,
+        background: '#f5f5f5'
     },
     titleStyle: {
         color: '#ffffff',
@@ -65,7 +82,7 @@ const styles = {
     pageIconStyle: {
         fontSize: '55px'
     }
-};
+});
 
 const pages = [
     {
@@ -87,17 +104,22 @@ class Layout extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPage: 'dblist'
+            currentPage: 'dblist',
+            openMenu: false
         };
 
         this.onTabClick = this.onTabClick.bind(this);
     }
 
     logOutClick(){
+        CurrentUser.logOut();
         window.location.href = '/logout';
     }
 
     componentDidMount(){
+        CurrentUser.loggedIn = true;
+        CurrentUser.fetchUser();
+
         let selectedPage = this.props.location.pathname == "/" ? 'dblist' : this.props.location.pathname.slice(1);
         this.setState({
             currentPage: selectedPage
@@ -124,9 +146,32 @@ class Layout extends Component {
                             Efile Admin Dashboard
                         </Typography>
                     </Link>
-                    <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.logOutClick}>
-                        <Icon>exit_to_app</Icon>
-                    </IconButton>
+
+                    <ClickAwayListener onClickAway={() => this.setState({openMenu: false})}>
+                        <div>
+                            <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={() => this.setState({openMenu: !this.state.openMenu})}>
+                                <Icon>person</Icon>
+                            </IconButton>
+                            {this.state.openMenu ? (
+                                    <Paper className={classes.profileMenu}>
+                                        <div className={classes.profileMenuContent}>
+                                            <Avatar className={classes.avatarStyle}>
+                                                <Icon>person</Icon>
+                                            </Avatar>
+                                            <Typography variant='h6' align="center">
+                                                {CurrentUser.user.username}
+                                            </Typography>
+                                            <Typography variant='caption' align="center">
+                                                {CurrentUser.user.email}
+                                            </Typography>
+                                        </div>
+                                        <Button size="small" variant="contained" color="secondary" fullWidth onClick={this.logOutClick}>
+                                            <Icon>exit_to_app</Icon> Log Out
+                                        </Button>
+                                    </Paper>
+                                ) : null}
+                        </div>
+                    </ClickAwayListener>
                 </Paper>
                 <Paper square elevation={1} className={classes.tabContainer}>
                     <Tabs value={this.state.currentPage} style={{maxWidth: '750px', margin: '0 auto'}}>

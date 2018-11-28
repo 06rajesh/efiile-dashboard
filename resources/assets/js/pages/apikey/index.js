@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import Layout from '../layout';
 
 import {createNewApiKey, getApiKeyList, deleteById, updateKeyStatus} from '../../actions/apiKeyActions';
+import {CurrentUser} from '../../reducers/currentUser';
+
 import Pagination from '../../components/pagination';
 import NewApiKey from './newApiKey';
 import ConfirmModal from '../../components/confirmModal';
@@ -203,13 +205,19 @@ class ApiKey extends Component {
                             {row.key}
                         </TableCell>
                         <TableCell>
-                            <IconButton className={classes.tableIcon} onClick={() => this.showEditConfirmDialogue(row)}>
+                            <IconButton className={classes.tableIcon}
+                                        onClick={() => this.showEditConfirmDialogue(row)}
+                                        disabled={!CurrentUser.user.canAddKey}
+                            >
                                 <Icon className={typeClass}>{iconString}</Icon>
                             </IconButton>
                         </TableCell>
                         <TableCell numeric padding="none">{ApiKey.timeSince(row.createdAt)}</TableCell>
                         <TableCell numeric>
-                            <IconButton className={classes.tableIcon} onClick={() => this.showDeleteConfirmDialogue(row)}>
+                            <IconButton className={classes.tableIcon}
+                                        onClick={() => this.showDeleteConfirmDialogue(row)}
+                                        disabled={!CurrentUser.user.canAddKey}
+                            >
                                 <Icon>delete</Icon>
                             </IconButton>
                         </TableCell>
@@ -253,7 +261,7 @@ class ApiKey extends Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow hover onClick={() => this.setState({newModal: true})} style={{cursor: 'pointer'}}>
+                            <TableRow hover onClick={() => (CurrentUser.user.canAddKey) ? this.setState({newModal: true}) : null} style={{cursor: 'pointer'}}>
                                 <TableCell component="th" padding="dense">
                                     <Avatar className={classes.tableIconStyle}><Icon>add</Icon></Avatar>
                                 </TableCell>

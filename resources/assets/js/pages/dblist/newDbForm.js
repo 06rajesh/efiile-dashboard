@@ -136,12 +136,11 @@ class NewDbForm extends Component{
                     <Grid item xs={6} className={classes.gridStyles}>
                         <TextField id="confirm" label="Confirm Password" type="password" name="confirm" value={this.state.confirm} onChange={this.handleChange} margin="normal" variant="outlined" fullWidth/>
                     </Grid>
-                    <Grid item xs={4}>
-                        <Button variant="outlined" color="default" size="small" fullWidth>
-                            Check Connection
-                        </Button>
-                    </Grid>
-                    <Grid item xs={5}/>
+                    {/*<Grid item xs={4}>*/}
+                        {/*<Button variant="outlined" color="default" size="small" fullWidth>*/}
+                            {/*Check Connection*/}
+                        {/*</Button>*/}
+                    {/*</Grid>*/}
                     <Grid item xs={3}>
                         <FormControlLabel
                             control={
@@ -154,7 +153,7 @@ class NewDbForm extends Component{
                             label="Enabled"
                         />
                     </Grid>
-                    <Grid item xs={8}/>
+                    <Grid item xs={5}/>
                     <Grid item xs={4}>
                         <Button variant="contained" color="primary" fullWidth onClick={this.handleSubmit}>
                             Submit

@@ -28,7 +28,7 @@
     "express-session": "^1.15.6",
     "history": "^4.7.2",
     "md5": "^2.2.1",
-    "mongoose": "^4.13.7",
+    "mongoose": "^5.8.10",
     "mysql": "^2.16.0",
     "path": "^0.12.7",
     "prop-types": "^15.6.0",
